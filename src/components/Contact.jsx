@@ -168,7 +168,7 @@ export default function Contact() {
                 {site.availabilityLabel}
               </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                Currently taking on freelance work and open to full-time frontend roles. Typical
+                Currently taking on freelance work and open to full-time software roles. Typical
                 reply time: under 24 hours.
               </p>
 

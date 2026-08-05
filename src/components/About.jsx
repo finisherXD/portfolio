@@ -23,7 +23,7 @@ export default function About() {
             <SectionHeading
               eyebrow="The journey"
               title="Building, studying, and teaching in parallel"
-              description="I'm a frontend developer and IT student in Damascus. Client work taught me to ship; tutoring 100+ students taught me to actually understand what I'm shipping."
+              description="I'm a software developer and IT student in Damascus. Client work taught me to ship; tutoring 100+ students taught me to actually understand what I'm shipping."
             />
 
             <motion.div

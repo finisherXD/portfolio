@@ -4,7 +4,7 @@ export const timelineData = [
   {
     id: 'frontend-2024',
     period: '2024 — Present',
-    title: 'Frontend Developer',
+    title: 'Software Developer',
     org: 'Client & freelance web/app projects · Damascus, Syria',
     type: 'work',
     icon: Briefcase,

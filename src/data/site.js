@@ -4,9 +4,9 @@ import { GithubIcon, LinkedinIcon, XIcon } from '../components/icons/BrandIcons'
 export const site = {
   name: 'Basheer Hourany',
   initials: 'BH',
-  role: 'Frontend Developer',
+  role: 'Software Developer',
   tagline:
-    'Frontend developer and IT student building responsive, multilingual web and mobile interfaces in React and Flutter — comfortable across the stack with Django and REST APIs.',
+    'Software developer and IT student building responsive, multilingual web and mobile interfaces in React and Flutter — comfortable across the stack with Django and REST APIs.',
   location: 'Damascus, Syria',
   email: 'muhammadh.2004@gmail.com',
   phone: '+963 951 820 497',
