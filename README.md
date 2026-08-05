@@ -23,7 +23,7 @@ react_portfolio/
 ├── public/
 │   ├── favicon.svg
 │   ├── resume.pdf              # ← your CV, linked from the hero "Résumé" button
-│   └── projects/               # ← drop project screenshots here
+│   └── projects/               # Card artwork (live screenshot + brand logos)
 └── src/
     ├── main.jsx
     ├── App.jsx                 # Section order lives here
@@ -63,24 +63,31 @@ Everything content-related is in `src/data/` — you shouldn't need to touch a c
 
 - `category` values feed the filter bar automatically — add a new one and a new tab appears.
 - `featured: true` makes a card span half a row; the layout tiles cleanly with **2 featured + 3 standard**.
-- `image` points into `/public`. Until a file exists there, the card falls back to a gradient
-  placeholder with the project name — and if the path 404s, it silently falls back too.
+- `image` points into `/public/projects`. Gravity uses a screenshot of the live site; the rest use
+  card art generated from each project's own logo. Swap in real screenshots any time — and if a
+  path 404s, the card silently falls back to a gradient placeholder with the project name.
 - Leave `demo`/`github` as `''` and the card shows "Client work — details on request" instead
   of dead links. Fill them in as projects go public.
 
-**`site.js`** — LinkedIn and X aren't in your CV, so they're commented out at the bottom of
-`socials`. Add your handles and uncomment to show them.
+**`site.js`** — GitHub, LinkedIn, email, and phone are live. X is commented out at the bottom of
+`socials`; add your handle and uncomment if you want it.
 
-## Wiring up the contact form
+## The contact form
 
-`Contact.jsx` currently fakes the request with a 1.4s delay, then fires a success toast. Replace
-this block in `handleSubmit` with your endpoint (Formspree, Resend, an API route, whatever):
+There's no backend. Rather than pretend to send and quietly drop the message, `handleSubmit`
+validates the input and then hands off to the visitor's mail client with the subject and body
+pre-filled — no server needed, and nothing gets lost.
+
+To wire up a real endpoint later (Formspree, Resend, an API route), replace this line in
+`Contact.jsx` with your fetch call:
 
 ```js
-await new Promise((resolve) => setTimeout(resolve, 1400))
+window.location.href = mailto
 ```
 
-The validation, error states, and toasts all work already.
+To make the form purely decorative instead, delete that line — validation and toasts still run,
+but nothing leaves the page. To drop the form entirely, remove the first `<Reveal>` block in
+`Contact.jsx` and the direct-contact card will take the full width.
 
 ## Notes
 
