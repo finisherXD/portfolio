@@ -4,6 +4,9 @@ import { ArrowDown, ArrowUpRight, Download, MapPin, Sparkles } from 'lucide-reac
 import { heroStack, heroStats, site, socials } from '../data/site'
 import MagneticButton from './ui/MagneticButton'
 
+// Slow-out cubic — the "expensive" easing; motion decelerates rather than stops.
+const EASE = [0.16, 1, 0.3, 1]
+
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
@@ -12,6 +15,53 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 26 },
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+}
+
+// The name reveals a line at a time from behind a mask, the way a title
+// sequence does. Each line sits in an overflow-hidden block and slides up.
+const nameGroup = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+}
+
+const nameLine = {
+  hidden: { y: '115%' },
+  show: { y: '0%', transition: { duration: 1.05, ease: EASE } },
+}
+
+// Intro copy resolves out of a soft blur — reads as "coming into focus"
+// and costs one compositor property rather than a layout pass.
+const focusIn = {
+  hidden: { opacity: 0, y: 18, filter: 'blur(7px)' },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.95, ease: EASE },
+  },
+}
+
+// The rule beside the role title draws itself in.
+const drawLine = {
+  hidden: { scaleX: 0 },
+  show: { scaleX: 1, transition: { duration: 0.8, ease: EASE, delay: 0.1 } },
+}
+
+// Stack pills pop in as a quick ripple rather than all at once.
+const pillGroup = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.045 } },
+}
+
+const pillItem = {
+  hidden: { opacity: 0, scale: 0.9, y: 8 },
+  show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
+}
+
+/** Reduced-motion callers get the same choreography with no movement. */
+const still = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.4 } },
 }
 
 export default function Hero() {
@@ -75,26 +125,50 @@ export default function Hero() {
           </span>
         </motion.div>
 
-        {/* Name */}
+        {/* Name — masked line reveal */}
         <motion.h1
-          variants={item}
+          variants={reduceMotion ? still : nameGroup}
           className="mt-8 font-display text-[clamp(2.75rem,9vw,7rem)] leading-[0.95] font-extrabold tracking-tight"
         >
-          <span className="block text-white">Basheer</span>
-          <span className="text-gradient block">Hourany</span>
+          {[
+            { text: 'Basheer', tone: 'text-white' },
+            { text: 'Hourany', tone: 'text-gradient' },
+          ].map(({ text, tone }) => (
+            // pb/-mb pair gives descenders room so the mask never clips the "y"
+            <span key={text} className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+              <motion.span
+                variants={reduceMotion ? still : nameLine}
+                className={`block ${tone}`}
+              >
+                {text}
+              </motion.span>
+            </span>
+          ))}
         </motion.h1>
 
         {/* Role + tagline */}
-        <motion.div variants={item} className="mt-8 flex flex-col gap-5 md:flex-row md:items-start">
+        <motion.div
+          variants={container}
+          className="mt-8 flex flex-col gap-5 md:flex-row md:items-start"
+        >
           <div className="flex items-center gap-3 md:w-64 md:shrink-0">
-            <span className="h-px w-10 bg-gradient-to-r from-brand-400 to-transparent" />
-            <p className="font-mono text-xs tracking-[0.18em] text-brand-300 uppercase">
+            <motion.span
+              variants={reduceMotion ? still : drawLine}
+              className="h-px w-10 origin-left bg-gradient-to-r from-brand-400 to-transparent"
+            />
+            <motion.p
+              variants={reduceMotion ? still : focusIn}
+              className="font-mono text-xs tracking-[0.18em] text-brand-300 uppercase"
+            >
               {site.role}
-            </p>
+            </motion.p>
           </div>
-          <p className="max-w-xl text-lg leading-relaxed text-pretty text-slate-400">
+          <motion.p
+            variants={reduceMotion ? still : focusIn}
+            className="max-w-xl text-lg leading-relaxed text-pretty text-slate-400"
+          >
             {site.tagline}
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* CTAs */}
@@ -119,13 +193,14 @@ export default function Hero() {
         </motion.div>
 
         {/* Tech stack pills */}
-        <motion.ul variants={item} className="mt-12 flex flex-wrap gap-2.5">
-          {heroStack.map((tech, i) => (
+        <motion.ul
+          variants={reduceMotion ? still : pillGroup}
+          className="mt-12 flex flex-wrap gap-2.5"
+        >
+          {heroStack.map((tech) => (
             <motion.li
               key={tech}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.9 + i * 0.05, duration: 0.4 }}
+              variants={reduceMotion ? still : pillItem}
               whileHover={{ y: -3, scale: 1.04 }}
               className="glass group cursor-default rounded-full px-4 py-2 text-sm text-slate-300 transition-colors duration-300 hover:border-brand-400/40 hover:text-white"
             >
