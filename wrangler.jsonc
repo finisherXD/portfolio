@@ -1,0 +1,14 @@
+{
+  // Static-assets-only Worker — there is no server code, just the built site.
+  "name": "basheer-hourany-portfolio",
+  "compatibility_date": "2026-08-06",
+  "assets": {
+    "directory": "./dist"
+
+    // Deliberately no "not_found_handling": "single-page-application".
+    // This site has no client-side router — the nav uses hash anchors
+    // (#projects, #skills), which never hit the server. Turning on SPA
+    // fallback would make every unknown path, including a mistyped image
+    // URL, return index.html with a 200 instead of an honest 404.
+  }
+}
