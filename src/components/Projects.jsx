@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue } from 'framer-motion'
-import { ArrowUpRight, ImageOff, Lock, Star } from 'lucide-react'
+import { ArrowUpRight, ImageOff, Info, Lock, Star } from 'lucide-react'
 import { projectCategories, projectsData } from '../data/projects'
 import { GithubIcon } from './icons/BrandIcons'
+import useCoarsePointer from '../hooks/useCoarsePointer'
 import SectionHeading from './ui/SectionHeading'
 
 export default function Projects() {
@@ -76,6 +77,8 @@ export default function Projects() {
 function ProjectCard({ project, index }) {
   const cardRef = useRef(null)
   const [imageFailed, setImageFailed] = useState(false)
+  const [revealed, setRevealed] = useState(false)
+  const coarsePointer = useCoarsePointer()
 
   // Cursor-tracked highlight — driven entirely by motion values so moving the
   // mouse never triggers a React re-render.
@@ -95,6 +98,18 @@ function ProjectCard({ project, index }) {
   // 6-column grid: `wide` cards take half a row, the rest take a third. Keep
   // the count of wide cards even so every row fills (4 wide + 2 = 6/6/4).
   const span = project.wide ? 'lg:col-span-3' : 'lg:col-span-2'
+
+  // On touch devices there is no hover, so the overlay — description, demo and
+  // repo links — would be unreachable. Tapping the artwork toggles it instead.
+  function toggleOverlay(e) {
+    if (!coarsePointer) return
+    if (e.target.closest('a')) return // let the links inside do their job
+    setRevealed((open) => !open)
+  }
+
+  const overlayState = revealed ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+  const contentState = revealed ? 'translate-y-0' : 'translate-y-3 group-hover:translate-y-0'
+  const badgeState = revealed ? 'opacity-0' : 'group-hover:opacity-0'
 
   return (
     <motion.article
@@ -116,8 +131,22 @@ function ProjectCard({ project, index }) {
         style={{ background: highlight }}
       />
 
-      {/* Media */}
-      <div className="relative aspect-[16/10] overflow-hidden sm:aspect-[16/9]">
+      {/* Media — doubles as the tap target for the overlay on touch devices */}
+      <div
+        onClick={toggleOverlay}
+        role={coarsePointer ? 'button' : undefined}
+        tabIndex={coarsePointer ? 0 : undefined}
+        aria-expanded={coarsePointer ? revealed : undefined}
+        aria-label={coarsePointer ? `${revealed ? 'Hide' : 'Show'} details for ${project.title}` : undefined}
+        onKeyDown={(e) => {
+          if (!coarsePointer) return
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setRevealed((open) => !open)
+          }
+        }}
+        className="relative aspect-[16/10] overflow-hidden sm:aspect-[16/9]"
+      >
         <div
           className={`absolute inset-0 bg-gradient-to-br ${project.accent} transition-transform duration-700 group-hover:scale-105`}
         />
@@ -144,12 +173,16 @@ function ProjectCard({ project, index }) {
 
         {/* Overlay revealed on hover. The description is clamped so it can
             never outgrow the media box — standard cards only have ~200px. */}
-        <div className="absolute inset-0 z-20 flex flex-col justify-end overflow-hidden bg-gradient-to-t from-ink-950 via-ink-950/85 to-ink-950/60 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <p className="line-clamp-5 translate-y-3 text-xs leading-relaxed text-slate-300 transition-transform duration-500 group-hover:translate-y-0 sm:line-clamp-6 sm:text-sm">
+        <div
+          className={`absolute inset-0 z-20 flex flex-col justify-end overflow-hidden bg-gradient-to-t from-ink-950 via-ink-950/85 to-ink-950/60 p-5 transition-opacity duration-500 ${overlayState}`}
+        >
+          <p
+            className={`line-clamp-5 text-xs leading-relaxed text-slate-300 transition-transform duration-500 sm:line-clamp-6 sm:text-sm ${contentState}`}
+          >
             {project.description}
           </p>
           <div
-            className={`flex translate-y-3 gap-2 transition-transform duration-500 delay-75 group-hover:translate-y-0 ${
+            className={`flex gap-2 transition-transform duration-500 delay-75 ${contentState} ${
               hasLinks ? 'mt-4' : ''
             }`}
           >
@@ -178,8 +211,10 @@ function ProjectCard({ project, index }) {
           </div>
         </div>
 
-        {/* Badges step aside so they never collide with the hover overlay */}
-        <div className="absolute top-4 left-4 z-30 flex flex-wrap items-center gap-2 transition-opacity duration-300 group-hover:opacity-0">
+        {/* Badges step aside so they never collide with the overlay */}
+        <div
+          className={`absolute top-4 left-4 z-30 flex flex-wrap items-center gap-2 transition-opacity duration-300 ${badgeState}`}
+        >
           {project.featured && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-ink-950/60 px-3 py-1 text-[11px] font-medium text-brand-200 backdrop-blur-md">
               <Star className="h-3 w-3 fill-brand-300 text-brand-300" />
@@ -193,6 +228,19 @@ function ProjectCard({ project, index }) {
             </span>
           )}
         </div>
+
+        {/* Touch-only affordance — desktop gets the same content on hover */}
+        {coarsePointer && (
+          <span
+            aria-hidden="true"
+            className={`absolute right-4 bottom-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-ink-950/70 px-3 py-1 text-[11px] font-medium text-slate-200 backdrop-blur-md transition-opacity duration-300 ${
+              revealed ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <Info className="h-3 w-3" />
+            Tap for details
+          </span>
+        )}
       </div>
 
       {/* Body */}
