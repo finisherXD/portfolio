@@ -62,7 +62,12 @@ Everything content-related is in `src/data/` — you shouldn't need to touch a c
 `image`, `demo`, `github`, `year`, `featured`, and an optional `status` badge.
 
 - `category` values feed the filter bar automatically — add a new one and a new tab appears.
-- `featured: true` makes a card span half a row; the layout tiles cleanly with **2 featured + 3 standard**.
+- `wide: true` makes a card span half a row instead of a third. The grid is 6 columns, so wide
+  cards take 3 and the rest take 2 — **keep the number of wide cards even** and every row fills.
+  Currently 4 wide + 2 standard, which tiles as 6 / 6 / 4.
+- `featured: true` only adds the "Featured" badge — it's independent of `wide`.
+- `linkNote` is the line shown when a project has neither a demo nor a repo
+  (e.g. "Client work — details on request").
 - `image` points into `/public/projects`. Gravity uses a screenshot of the live site; the rest use
   card art generated from each project's own logo. Swap in real screenshots any time — and if a
   path 404s, the card silently falls back to a gradient placeholder with the project name.

@@ -20,7 +20,7 @@ export default function Projects() {
           <SectionHeading
             eyebrow="Selected work"
             title="Projects I've shipped"
-            description="Client platforms, a full-stack app with AI features, and a SaaS product in progress — web and mobile, most of them bilingual."
+            description="Two full-stack products with their own backends, client platforms, and a booking network in progress — web and mobile, most of them bilingual."
           />
 
           {/* Filter bar */}
@@ -92,9 +92,9 @@ function ProjectCard({ project, index }) {
 
   const showImage = project.image && !imageFailed
   const hasLinks = Boolean(project.demo || project.github)
-  // 6-column grid: featured cards take a half-row (3), the rest take a third (2),
-  // so 2 featured + 3 standard tile two complete rows with no dead space.
-  const span = project.featured ? 'lg:col-span-3' : 'lg:col-span-2'
+  // 6-column grid: `wide` cards take half a row, the rest take a third. Keep
+  // the count of wide cards even so every row fills (4 wide + 2 = 6/6/4).
+  const span = project.wide ? 'lg:col-span-3' : 'lg:col-span-2'
 
   return (
     <motion.article
@@ -142,9 +142,10 @@ function ProjectCard({ project, index }) {
           </div>
         )}
 
-        {/* Overlay revealed on hover */}
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-ink-950 via-ink-950/70 to-transparent p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <p className="translate-y-3 text-sm leading-relaxed text-slate-300 transition-transform duration-500 group-hover:translate-y-0">
+        {/* Overlay revealed on hover. The description is clamped so it can
+            never outgrow the media box — standard cards only have ~200px. */}
+        <div className="absolute inset-0 z-20 flex flex-col justify-end overflow-hidden bg-gradient-to-t from-ink-950 via-ink-950/85 to-ink-950/60 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <p className="line-clamp-5 translate-y-3 text-xs leading-relaxed text-slate-300 transition-transform duration-500 group-hover:translate-y-0 sm:line-clamp-6 sm:text-sm">
             {project.description}
           </p>
           <div
@@ -177,7 +178,8 @@ function ProjectCard({ project, index }) {
           </div>
         </div>
 
-        <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+        {/* Badges step aside so they never collide with the hover overlay */}
+        <div className="absolute top-4 left-4 z-30 flex flex-wrap items-center gap-2 transition-opacity duration-300 group-hover:opacity-0">
           {project.featured && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-ink-950/60 px-3 py-1 text-[11px] font-medium text-brand-200 backdrop-blur-md">
               <Star className="h-3 w-3 fill-brand-300 text-brand-300" />
@@ -249,7 +251,7 @@ function ProjectCard({ project, index }) {
               className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-brand-300"
             >
               <Lock className="h-3.5 w-3.5" />
-              Client work — details on request
+              {project.linkNote ?? 'Details on request'}
             </a>
           )}
         </div>
