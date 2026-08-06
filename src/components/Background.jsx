@@ -8,15 +8,32 @@ export default function Background() {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div className="absolute inset-0 bg-ink-900" />
 
-      {/* Mesh blooms */}
-      <div className="animate-aurora absolute -top-40 -left-32 h-[36rem] w-[36rem] rounded-full bg-brand-600/25 blur-[130px]" />
+      {/* Mesh blooms. These use radial-gradients rather than a solid circle
+          behind `blur-[130px]`: a 130px gaussian over a 576px element is one
+          of the most expensive things you can ask a weak GPU to rasterise,
+          and the gradient gives the same soft falloff for free. */}
       <div
-        className="animate-aurora absolute top-1/4 -right-40 h-[32rem] w-[32rem] rounded-full bg-glow-500/20 blur-[130px]"
-        style={{ animationDelay: '-7s' }}
+        className="animate-aurora absolute -top-40 -left-32 h-[36rem] w-[36rem]"
+        style={{
+          background:
+            'radial-gradient(circle closest-side, rgba(79,70,229,0.28), rgba(79,70,229,0.10) 55%, transparent 78%)',
+        }}
       />
       <div
-        className="animate-aurora absolute bottom-0 left-1/3 h-[30rem] w-[30rem] rounded-full bg-fuchsia-600/15 blur-[140px]"
-        style={{ animationDelay: '-14s' }}
+        className="animate-aurora absolute top-1/4 -right-40 h-[32rem] w-[32rem]"
+        style={{
+          animationDelay: '-7s',
+          background:
+            'radial-gradient(circle closest-side, rgba(6,182,212,0.22), rgba(6,182,212,0.08) 55%, transparent 78%)',
+        }}
+      />
+      <div
+        className="animate-aurora absolute bottom-0 left-1/3 h-[30rem] w-[30rem]"
+        style={{
+          animationDelay: '-14s',
+          background:
+            'radial-gradient(circle closest-side, rgba(192,38,211,0.18), rgba(192,38,211,0.07) 55%, transparent 78%)',
+        }}
       />
 
       {/* Grid, faded out toward the edges */}
@@ -31,9 +48,11 @@ export default function Background() {
         }}
       />
 
-      {/* Vignette + grain */}
+      {/* Vignette + grain. The grain drops mix-blend-overlay: a blend mode on
+          a full-viewport fixed layer forces its own compositing pass, and at
+          3.5% opacity the difference is invisible. */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(5,7,12,0.85)_100%)]" />
-      <div className="noise absolute inset-0 opacity-[0.035] mix-blend-overlay" />
+      <div className="noise absolute inset-0 opacity-[0.03]" />
     </div>
   )
 }

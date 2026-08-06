@@ -58,8 +58,11 @@ export default function Projects() {
           </motion.div>
         </div>
 
-        <motion.div layout className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
-          <AnimatePresence mode="popLayout">
+        {/* No `layout` prop here or on the cards: FLIP measurement forced well
+            over a second of layout work on a mid-range device at first paint,
+            for a reflow animation that only ever fires when filtering. */}
+        <motion.div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
+          <AnimatePresence>
             {visible.map((project, i) => (
               <ProjectCard key={project.id} project={project} index={i} />
             ))}
@@ -114,7 +117,6 @@ function ProjectCard({ project, index }) {
   return (
     <motion.article
       ref={cardRef}
-      layout
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.94 }}

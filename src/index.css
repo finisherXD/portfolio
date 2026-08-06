@@ -122,6 +122,22 @@
     border: 3px solid var(--color-ink-900);
   }
 
+  /* The whole page — six project cards, twenty skill meters, the timeline and
+     the contact form — used to be laid out before first paint, even though
+     none of it is on screen. `content-visibility` lets the browser skip
+     layout and paint for each section until it approaches the viewport.
+     The elements stay in the DOM, so anchors and getElementById still work.
+     `auto` in contain-intrinsic-size means the real size is remembered after
+     the first render, which keeps the scrollbar stable. */
+  #projects,
+  #skills,
+  #about,
+  #contact,
+  footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
