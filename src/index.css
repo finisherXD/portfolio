@@ -1,5 +1,14 @@
 @import 'tailwindcss';
 
+/* Fonts are bundled and served from our own origin. They used to come from
+   fonts.googleapis.com, but that stylesheet is render-blocking — when Google
+   is slow or unreachable the whole page stays blank until it resolves, and
+   the hero animation plays out unseen behind the block. Self-hosting removes
+   the third-party dependency entirely. Subsets are gated by unicode-range,
+   so only the Latin files are actually downloaded. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/sora';
+
 /* ------------------------------------------------------------------
    Design tokens (Tailwind v4 `@theme` — each var becomes a utility,
    e.g. --color-ink-900 → bg-ink-900 / text-ink-900 / border-ink-900)
@@ -20,8 +29,9 @@
   --color-glow-400: #22d3ee;
   --color-glow-500: #06b6d4;
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Sora', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  --font-display: 'Sora Variable', 'Sora', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 
   --animate-aurora: aurora 22s ease-in-out infinite;
   --animate-float: float 7s ease-in-out infinite;
